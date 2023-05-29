@@ -2,10 +2,8 @@
     width: 100%;
 }
 
-#firework-container {
+.header {
     position: relative;
     width: 100%;
-    height: 100vh;
-    background-color: #000;
     overflow: hidden;
   }
