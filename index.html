@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -21,32 +21,57 @@
       integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/fireworks-js@1.x/dist/fireworks.js"></script>
+
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
-      <div class="row">
-        <h3 id="header" class="text-center m-3">
-          Doğum Günün Kutlu Olsun Beyza
-        </h3>
-        <h3 id="balikAdi" class="text-center m-3"></h3>
-      </div>
-      <div class="row">
-        <div class="col-md-4"></div>
-        <div class="text-center mb-3 col-md-4">
-          <button id="getFish" class="btn btn-success">Tıkla</button>
-          <button id="whatsappButton" class="btn btn-info">Tıkla</button>
+      <div class="fireworks">
+        <div class="row">
+          <h3 id="header" class="text-center header mt-2">
+            Doğum Günün Kutlu Olsun Beyza
+          </h3>
+          <h3 id="balikAdi" class="text-center m-3"></h3>
         </div>
-        <div class="col-md-4"></div>
-      </div>
-      <div class="row">
-        <div class="text-center">
-          <img id="balikFoto" src="./img/beyza.png" alt="" />
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="text-center mb-3 col-md-4">
+            <button id="getFish" class="btn btn-success">Değiştir</button>
+          </div>
+
+          <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+          
+          </div>
+          <div  class="text-center col-md-4">
+            <button id="whatsappButton" class="btn btn-info">Damat Bul</button>
+          </div>
+
+          <div class="col-md-4"></div>
+        </div>
+        <div id="sarki" class="row">
+          <iframe
+            width="420"
+            height="315"
+            src="https://www.youtube.com/embed/tgbNymZ7vqY"
+          >
+          </iframe>
+        </div>
+
+        <div class="row">
+          <div class="text-center">
+            <img id="balikFoto" src="./img/beyza.png" alt="" />
+          </div>
         </div>
       </div>
     </div>
+    
   </body>
   <script>
+    $("#sarki").hide();
     const settings = {
       async: true,
       crossDomain: true,
@@ -63,6 +88,7 @@
         $("#balikFoto").attr("src", balikFotolari[randomNumber].foto);
         $("#header").text("Derya kuzusu bunlar geel");
         $("#balikAdi").text(balikFotolari[randomNumber].adi);
+
       });
       $("#whatsappButton").click(function () {
         var phoneNumber = "905436142914"; // Hedef telefon numarasını buraya girin
@@ -89,5 +115,12 @@
         });
       }
     });
+    const container = document.querySelector(".header");
+    const fireworks = new Fireworks(container, {
+      autoresize: true,
+    
+    });
+
+    fireworks.start();
   </script>
 </html>
