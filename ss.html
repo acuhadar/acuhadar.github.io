@@ -1,0 +1,310 @@
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.5/css/dx.common.css">
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.5/css/dx.light.css">
+<script src="https://cdn3.devexpress.com/jslib/22.2.5/js/dx.all.js"></script>
+<script src="https://cdn3.devexpress.com/jslib/20.1.7/js/localization/dx.messages.tr.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.8.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" integrity="sha512-03CCNkeosDFN2zCCu4vLpu3pJfZcrL48F3yB8k87ejT+OVMwco7IH3FW02vtbGhdncS6gyYZ/duYaC/K62xQPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.js" integrity="sha512-NmIoYvVsh1mGumphmTK9rc11ia21MZKRPsQV8RUn0x+sN6rxcBtST1Y5fw4WSiAzlryxCtPy00QoPfadNaq6gQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<style>
+    #tablehead {
+       
+        font-weight: 500;
+        font-size: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+        background-color: #ffffff;
+        padding-bottom: 20px;
+        padding-top: 20px;
+    }
+.dx-datagrid .dx-column-indicators .dx-header-filter.dx-header-filter, .dx-datagrid .dx-column-indicators .dx-header-filter.dx-sort, .dx-datagrid .dx-column-indicators .dx-sort.dx-header-filter, .dx-datagrid .dx-column-indicators .dx-sort.dx-sort{color:white !important;}
+    #datagrid {
+        margin-top: -1.8%;
+        margin-bottom:5%;
+    }
+
+    #ilselect {
+        margin-bottom: 2.5%;
+        margin-top: 2.5%;
+    }
+
+    #logo {
+        margin-top:15px;
+        width: 200px;
+    }
+
+    .dx-datagrid-summary-item {
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    .dx-datagrid-total-footer {
+        background-color: #c00000;
+    }
+    .print-area{background-color:white}
+
+</style> <div class=" print-area">
+
+
+<div class="container">
+    <div class="row">
+        <div>
+            <center>
+                <img id="logo" src="https://mekansalweb.afad.gov.tr/AFAD/assets/images/pixel-admin/netigma.png"/>
+            </center>
+        </div>
+        <div id="ilselect" class="col-md-12">
+            <select name="il" required="" class="selectpicker text-center" id="iller" style="width: 100%" onchange="prepareData()" data-style="btn-primary">
+                <option value="99">Tüm Türkiye</option>
+            </select>
+        </div>
+        <div class="dx-viewport">
+            <div class="col-md-12" id="tablehead"><br /></div>
+            <div class="col-md-12" id="datagrid"><br /></div>
+        </div>
+
+    </div>
+
+</div>
+</div><script>
+
+DevExpress.localization.locale("tr");
+    $(document).ready(function () {
+        var mainurl = "https://demopro.netcad.com.tr/AFADLegacy/gisapi";
+        var session = netigma.pagecontext.nsessionid    
+        $.get(
+            `https://demopro.netcad.com.tr/AFADLegacy/gisapi/query/query?queryName=afad_iller.il_api&&filter=afad_iller.fid in (1,2,21,27,31,44,46,63,79,80)&sessionID=${session}`,
+            function (data) {
+                for (i = 0; i < data.Rows.length; i++) {
+                    $("#iller").append(
+                        '<option value="' +
+                        data.Rows[i].Cells[0].Value +
+                        '">' +
+                        data.Rows[i].Cells[1].Value +
+                        "</option>"
+                    );
+                }
+                $("#iller").selectpicker("refresh");
+            }
+        );
+        prepareData();
+    });
+    function prepareData() {
+        detay = [];
+        var mainurl = "https://demopro.netcad.com.tr/AFADLegacy/gisapi/";
+        var il = $('#iller').val();
+        if (il === '99') {
+            var filter = encodeURI('z_malatya_kirsal_icmal_rapor.fid=');
+            var head = '06.02.2023 TARİHLİ DEPREM SONRASINDA ÇŞİDB VE AFAD TARAFINDAN YAPILAN YER SEÇİMİ ÇALIŞMALARI';
+            $('#tablehead').text(head);
+        } else {
+            var filter = encodeURI('z_malatya_kirsal_icmal_rapor.fid=' + il);
+            var head = '06.02.2023 TARİHLİ DEPREM SONRASINDA ' + il_adlari[il] + ' İLİNDE ÇŞİDB VE AFAD TARAFINDAN YAPILAN YER SEÇİMİ ÇALIŞMALARI';
+            $('#tablehead').text(head);
+        };
+        window.jsPDF = window.jspdf.jsPDF;
+
+        $.get(
+            `${mainurl}query/query?queryName=z_malatya_kirsal_icmal_rapor.Sorgusu&filter=${filter}&sessionID=54e933938f394372bbaa70cdf240ec5f`,
+            function (data) {
+                console.log(data)
+                for (i = 0; i < data.Rows.length; i++) {
+                    detay.push({
+                        id: data.Rows[i].Cells[0].Value,
+                        ili: data.Rows[i].Cells[1].Value,
+                        ilcesi: data.Rows[i].Cells[2].Value,
+                        birim_merkezi: data.Rows[i].Cells[3].Value,
+                        konut_sayisi: data.Rows[i].Cells[4].Value,
+                        degerlendirme: data.Rows[i].Cells[5].Value,
+                        planlanan_konut: data.Rows[i].Cells[6].Value,
+                        yerlesime_uygun: data.Rows[i].Cells[7].Value,
+                        yerlesime_uygun_degil: data.Rows[i].Cells[8].Value,
+                        il_id: data.Rows[i].Cells[9].Value,
+                    });
+                }
+            }
+        ).done(function () {
+            $(function () {
+                $("#datagrid").dxDataGrid({
+
+                    dataSource: detay,
+                    paging: {
+                        pageSize: 200,
+                    },
+                    keyExpr: "id",
+                    pager: {
+                        showPageSizeSelector: true,
+                        allowedPageSizes: [200, 250],
+                    },
+              headerFilter: {
+      visible: true,
+    },
+                    remoteOperations: false,
+                    rowAlternationEnabled: true,
+                    showBorders: true,
+                    wordWrapEnabled: true,
+                    export: {
+                        enabled: true,
+                        formats: ['xlsx'],
+                        
+                    },
+                    onCellPrepared: function (e) {
+                        if (e.rowType === 'header') {
+                            e.cellElement.css("backgroundColor", "#0053a8");
+                            e.cellElement.css('color', '#ffffff');
+                        } else if (e.rowType === 'totalFooter') {
+                            e.cellElement.css("backgroundColor", "#c00000");
+                            e.cellElement.css('color', '#ffffff');
+                        }
+                    },
+                    onExporting(e) {
+                       
+                            const workbook = new ExcelJS.Workbook();
+                            const worksheet = workbook.addWorksheet('YerSecimIcmal');
+
+                            DevExpress.excelExporter.exportDataGrid({
+                                component: e.component,
+                                worksheet,
+                                topLeftCell: { row: 4, column: 1 },
+                            }).then((cellRange) => {
+                                // header
+                                const headerRow = worksheet.getRow(2);
+                                headerRow.height = 30;
+                                worksheet.mergeCells(2, 1, 2, 8);
+
+                                headerRow.getCell(1).value = head;
+                                headerRow.getCell(1).font = { name: 'Segoe UI Light', size: 14 };
+                                headerRow.getCell(1).alignment = { horizontal: 'center' };
+
+                                // footer
+                                const footerRowIndex = cellRange.to.row + 2;
+                                const footerRow = worksheet.getRow(footerRowIndex);
+                                worksheet.mergeCells(footerRowIndex, 1, footerRowIndex, 8);
+
+                                footerRow.getCell(1).value = 'https://mekansalweb.afad.gov.tr/AFAD';
+                                footerRow.getCell(1).font = { color: { argb: 'BFBFBF' }, italic: true };
+                                footerRow.getCell(1).alignment = { horizontal: 'right' };
+                            }).then(() => {
+                                workbook.xlsx.writeBuffer().then((buffer) => {
+                                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'YerSecimIcmal.xlsx');
+                                });
+                            });
+                            e.cancel = true;
+                        
+                    },
+
+                    columns: [
+                        {
+                            dataField: "ili",
+                            caption: "İli",
+                        },
+                        {
+                            dataField: "ilcesi",
+                            caption: "İlçesi",
+                        },
+                        {
+                            dataField: "birim_merkezi",
+                            caption: "Mahalle Sayısı",
+                            dataType: "number",
+                            alignment: "right",
+                            format: { precision: 0 }
+                        },
+                        {
+                            dataField: "konut_sayisi",
+                            caption: "Hasarlı Konut Sayısı",
+                            dataType: "number",
+                            alignment: "right",
+                            format: { precision: 0 }
+                        },
+                        {
+                            dataField: "degerlendirme",
+                            caption: "Konut Yapılmak Üzere Bildirilen Mahalle Sayısı",
+                            dataType: "number",
+                            alignment: "right",
+                            format: { precision: 0 }
+                        },
+                        {
+                            dataField: "planlanan_konut",
+                            caption: "Bildirilen Konut Sayısı(%50)",
+                            dataType: "number",
+                            alignment: "right",
+                            format: { precision: 0 }
+                        },
+                        {
+                            dataField: "yerlesime_uygun",
+                            caption: "Toplu Yerleşime Uygun Konut",
+                            dataType: "number",
+                            alignment: "right",
+                            format: { precision: 0 }
+                        },
+                        {
+                            dataField: "yerlesime_uygun_degil",
+                            caption: "Toplu Yerleşime Uygun Olmayan Konut",
+                            dataType: "number",
+                            alignment: "right",
+                            format: { precision: 0 }
+                        },
+                    ],
+                    summary: {
+                        totalItems: [{
+                            column: "birim_merkezi",
+                            summaryType: "sum",
+                            displayFormat: 'Toplam: {0}',
+                        },
+                        {
+                            column: "konut_sayisi",
+                            summaryType: "sum",
+                            displayFormat: 'Toplam: {0}',
+                        },
+                        {
+                            column: "degerlendirme",
+                            summaryType: "sum",
+                            displayFormat: 'Toplam: {0}',
+                        },
+                        {
+                            column: "planlanan_konut",
+                            summaryType: "sum",
+                            displayFormat: 'Toplam: {0}',
+                        },
+                        {
+                            column: "yerlesime_uygun",
+                            summaryType: "sum",
+                            displayFormat: 'Toplam: {0}',
+                        },
+                        {
+                            column: "yerlesime_uygun_degil",
+                            summaryType: "sum",
+                            displayFormat: 'Toplam: {0}',
+                        },
+                        ]
+                    }
+                });
+
+            });
+
+        });
+    };
+    var il_adlari = {
+        '1': 'ADANA',
+        '2': 'ADIYAMAN',
+        '21': 'DİYARBAKIR',
+        '27': 'GAZİANTEP',
+        '31': 'HATAY',
+        '44': 'MALATYA',
+        '46': 'KAHRAMANMARAŞ',
+        '63': 'ŞANLIURFA',
+        '79': 'KİLİS',
+        '80': 'OSMANİYE'
+    };
+  
+</script>
