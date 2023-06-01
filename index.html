@@ -20,9 +20,10 @@
 <body>
   <div class="container">
     <div class="row ">
-      <h3 id="" class=" text-center mt-2">
+      <h3 id="elif" class=" text-center mt-2">
         Elif Birazdan Pazara gidecek
       </h3>
+      
       <h3 id="demo" class="text-center m-3"></h3>
     </div>
 
@@ -30,10 +31,7 @@
   </div>
 </body>
 <script>
-  // Set the date we're counting down to
   var countDownDate = new Date("June 1, 2023 11:30:00").getTime();
-
-  // Update the count down every 1 second
   var x = setInterval(function () {
 
     // Get today's date and time
@@ -55,7 +53,9 @@
     // If the count down is finished, write some text
     if (distance < 0) {
       clearInterval(x);
-      document.getElementById("demo").innerHTML = "EXPIRED";
+      document.getElementById("elif").innerHTML = "Çok tatlısınız şimdi çıkma vakti";
+      document.getElementById("demo").innerHTML = "";
+
     }
   }, 1000);
 </script>
